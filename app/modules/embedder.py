@@ -71,7 +71,7 @@ class MultilingualE5:
             print(f"Error saving models: {str(e)}")
             raise
 
-
+#
 # model = MultilingualE5()
 # for d in model.get_top_k('что сделать, если в командном интерфейсе нет объектов?'):
 #     print(d)

@@ -3,7 +3,7 @@ import pandas as pd
 import numpy as np
 from mistralai import Mistral
 from mistralai.models import UserMessage
-from .embedder import MultilingualE5
+from embedder import MultilingualE5
 
 class Model:
     def __init__(self, mistral_api_key):
@@ -17,6 +17,17 @@ class Model:
     )
     
         return chat_response.choices[0].message.content
+
+    def reranking(self, retreived_chunks, user_query):
+        scores = []
+        for chunk in retreived_chunks:
+            prompt = f"""On a scale of 1-10, rate the relevance of the following document to the query. Consider the specific context and intent of the query, not just keyword matches.
+            Query: {user_query}
+            Document: {chunk}
+            Relevance Score:"""
+            scores.append({'File': chunk, 'Score': self.generate_mistral_response(prompt)})
+
+        return scores
 
     def prompt_eng(self, retrieved_chunks, user_query):
         # Формирование промпта

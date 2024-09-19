@@ -51,3 +51,8 @@ wheel==0.43.0
 python-dotenv==0.19.1
 datasets==3.0.0
 sentence-transformers==3.1.0
+SQLAlchemy==2.0.35
+langchain==0.3.0
+langchain-core==0.3.1
+langchain-text-splitters==0.3.0
+langsmith==0.1.123

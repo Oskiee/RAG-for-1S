@@ -13,6 +13,7 @@ class Model:
     def generate_mistral_response(self, user_message, model="open-mistral-nemo"):
         chat_response = self.mistral_client.chat.complete(
         model=model,
+        temperature=0.1,
         messages=[UserMessage(content=user_message)],
     )
     
@@ -22,10 +23,11 @@ class Model:
         scores = []
         for chunk in retreived_chunks:
             prompt = f"""On a scale of 1-10, rate the relevance of the following document to the query. Consider the specific context and intent of the query, not just keyword matches.
+            As an answer give ONLY a number between 1-10!
             Query: {user_query}
             Document: {chunk}
             Relevance Score:"""
-            scores.append({'File': chunk, 'Score': self.generate_mistral_response(prompt)})
+            scores.append({'File': chunk, 'Score': int(self.generate_mistral_response(prompt))})
 
         return scores
 
@@ -59,8 +61,22 @@ class Model:
     def process_user_query(self, user_query):
         top_docs = self.embed_model.get_top_k(user_query)
 
+        try:
+            reranked = sorted(self.reranking(top_docs, user_query), key=lambda d: d['Score'])
+        except Exception as e:
+            reranked = top_docs
+            print("!!!ERROR WHILE RERANKING!!!")
+
+        top1 = [reranked[0]["File"]]
+        reranked.pop(0)
+        for doc in reranked:
+            if top1[0]["File"] == doc["File"]["File"]:
+                top1.append(doc["File"])
+
+        top = sorted(top1, key=lambda d: d['Num'])
+
         # Формирование промпта
-        prompt = self.prompt_eng(top_docs, user_query)
+        prompt = self.prompt_eng(top, user_query)
 
         # Генерация ответа с помощью Mistral
         response = self.generate_mistral_response(prompt)
@@ -71,6 +87,6 @@ class Model:
 # Пример использования
 if __name__ == "__main__":
    model = Model('K4zGEUUJAQbeC8E2j0SDd4mRAVTwe5OT')
-   user_query = 'Что такое значение "NULL"?'
+   user_query = 'что сделать, если в командном интерфейсе нет объектов?'
    response = model.process_user_query(user_query)
    print(response)

@@ -3,7 +3,7 @@ import pandas as pd
 import numpy as np
 from mistralai import Mistral
 from mistralai.models import UserMessage
-from embedder import MultilingualE5
+from .embedder import MultilingualE5
 
 class Model:
     def __init__(self, mistral_api_key):
@@ -59,24 +59,33 @@ class Model:
         return prompt
 
     def process_user_query(self, user_query):
-        top_docs = self.embed_model.get_top_k(user_query)
-
-        try:
-            reranked = sorted(self.reranking(top_docs, user_query), key=lambda d: d['Score'])
-        except Exception as e:
-            reranked = top_docs
-            print("!!!ERROR WHILE RERANKING!!!")
-
-        top1 = [reranked[0]["File"]]
-        reranked.pop(0)
-        for doc in reranked:
-            if top1[0]["File"] == doc["File"]["File"]:
-                top1.append(doc["File"])
-
-        top = sorted(top1, key=lambda d: d['Num'])
+        top_docs = self.embed_model.get_top_k(user_query, k=3)
+        #
+        # for i in top_docs:
+        #     print(i)
+        #
+        # print('||||||||||||||||||||||||||||||||||||||||||||||')
+        #
+        # try:
+        #     reranked = sorted(self.reranking(top_docs, user_query), key=lambda d: d['Score'])
+        # except Exception as e:
+        #     reranked = top_docs
+        #     print("!!!ERROR WHILE RERANKING!!!")
+        #
+        # top1 = [reranked[0]['File']]
+        # r = reranked[0]
+        # reranked.pop(0)
+        # for doc in reranked:
+        #     if r["File"]['File'] == doc["File"]["File"] or r['Score'] == doc["Score"]:
+        #         top1.append(doc["File"])
+        #
+        # top = sorted(top1, key=lambda d: d['Num'])
+        #
+        # for j in top:
+        #     print(j)
 
         # Формирование промпта
-        prompt = self.prompt_eng(top, user_query)
+        prompt = self.prompt_eng(top_docs, user_query)
 
         # Генерация ответа с помощью Mistral
         response = self.generate_mistral_response(prompt)
@@ -84,9 +93,9 @@ class Model:
         return response
 
 
-# Пример использования
-if __name__ == "__main__":
-   model = Model('K4zGEUUJAQbeC8E2j0SDd4mRAVTwe5OT')
-   user_query = 'что сделать, если в командном интерфейсе нет объектов?'
-   response = model.process_user_query(user_query)
-   print(response)
+# # Пример использования
+# if __name__ == "__main__":
+#    model = Model('')
+#    user_query = 'в чем различие между простым и сложным ограничением?'
+#    response = model.process_user_query(user_query)
+#    print(response)

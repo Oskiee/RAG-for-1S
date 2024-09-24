@@ -15,7 +15,7 @@ class Model:
         model=model,
         temperature=0.1,
         messages=[UserMessage(content=user_message)],
-        max_tokens=500,
+        max_tokens=1000,
     )
     
         return chat_response.choices[0].message.content
@@ -35,24 +35,23 @@ class Model:
     def prompt_eng(self, retrieved_chunks, user_query):
         # Формирование промпта
         prompt = f"""
-        You are an expert in technical documentation for the Russian software developer company.
+        You are an expert in technical documentation for a Russian software development company.
 
         Your task is to answer users' questions in Russian only, confidently and politely, based solely on the provided contextual information.
 
-        !!!!!Do not use any prior knowledge or assumptions.!!!!!
-
-        **You are obliged to provide links to the material from the provided information from the metadata ('File') below in the format:**
-        --------------------------------------------------------------
+        Important Guidelines:
+        1. No Prior Knowledge: Do not use any prior knowledge or assumptions.
+        2. Source Attribution: Always provide links to the material from the provided metadata ('File') below in the format:
+        ————————————————————–
         Источник: File
-        --------------------------------------------------------------
-        *If you have not found relevant information from the given context, do not write sources!*
+        ————————————————————–
+        3. Clarification Requests: If relevant information is not found in the context, kindly ask the user for more details regarding their query.
 
-        Context information is provided below.
+        Context Information: 
         ---------------------
         {retrieved_chunks}
         ---------------------
-
-        Given the context information above, answer the following question in as much detail as possible:
+        
         Query: {user_query}
 
         Answer:

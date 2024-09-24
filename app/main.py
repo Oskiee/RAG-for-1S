@@ -31,8 +31,15 @@ def send_welcome(message):
 
 @bot.message_handler(func=lambda message: True)
 def echo_all(message):
-    response = model.process_user_query(message.text) # add chat history
-    bot.send_message(message.chat.id, response)
+    loading_message = bot.send_message(message.chat.id, "Формирую ответ...")
+    try:
+        response = model.process_user_query(message.text)
+        bot.delete_message(message.chat.id, loading_message.message_id)
+        bot.send_message(message.chat.id, response)
+    except BaseException as error:
+        print('An exception occurred: {}'.format(error))
+        bot.send_message(message.chat.id, 'Извините, возникла ошибка. Измениете запрос или попробуйте позже.')
+
 
 #
 # @bot.callback_query_handler(func=lambda call: True)

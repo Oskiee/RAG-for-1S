@@ -15,6 +15,7 @@ class Model:
         model=model,
         temperature=0.1,
         messages=[UserMessage(content=user_message)],
+        max_tokens=500,
     )
     
         return chat_response.choices[0].message.content
@@ -40,9 +41,9 @@ class Model:
 
         !!!!!Do not use any prior knowledge or assumptions.!!!!!
 
-        **You are obliged to provide links to the material from the provided information from the metadata (<File>) below in the format:**
+        **You are obliged to provide links to the material from the provided information from the metadata ('File') below in the format:**
         --------------------------------------------------------------
-        Источник: <File>
+        Источник: File
         --------------------------------------------------------------
         *If you have not found relevant information from the given context, do not write sources!*
 

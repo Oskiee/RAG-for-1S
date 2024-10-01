@@ -5,6 +5,7 @@ import dill
 import os
 import errno
 
+
 def get_detailed_instruct(task_description: str, query: str) -> str:
     return f'Instruct: {task_description}\nQuery: {query}'
 
@@ -19,8 +20,8 @@ class MultilingualE5:
         self.model_name = model_name
         self.model = SentenceTransformer(model_name)
         cur_path = os.path.dirname(os.path.abspath(__file__))
-        chunks_file = os.path.join(cur_path, 'db/chunked_files_1S_multi.pkl')
-        embeddings_file = os.path.join(cur_path, 'db/embeddings_multi.pkl')
+        chunks_file = os.path.join(cur_path, 'db/chunked_files_new_1024.pkl')
+        embeddings_file = os.path.join(cur_path, 'db/doc_embeddings_e5_new_1024.pkl')
         self.chunks = np.array(load_pkl(chunks_file))
         self.doc_embeddings = load_pkl(embeddings_file)
 

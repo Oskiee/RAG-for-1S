@@ -12,8 +12,11 @@ load_dotenv()
 TELEGRAM_TOKEN = "7882340349:AAF0DsxE9YIFSX9Dtx01DsY321n6JQs7EkU"
 MISTAL_API = "K4zGEUUJAQbeC8E2j0SDd4mRAVTwe5OT"
 OPENAI_API_TOKEN = os.getenv("OPENAI API TOKEN")
-CSV_FILE = "user_feedback.csv"
-METADATA_FILE = "metadata.csv"
+
+cur_path = os.path.dirname(os.path.abspath(__file__))
+
+CSV_FILE = os.path.join(cur_path, "user_feedback.csv")
+METADATA_FILE = os.path.join(cur_path, "metadata.csv")
 
 bot = telebot.TeleBot(TELEGRAM_TOKEN)
 model = Model(MISTAL_API)

@@ -196,4 +196,4 @@ def handle_reason_selection(call):
         bot.answer_callback_query(call.id)
 
 
-bot.polling()
+bot.infinity_polling(none_stop=True)
